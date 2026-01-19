@@ -1,0 +1,21 @@
+{
+  "name": "BasketTalk AAC",
+  "short_name": "BasketTalk",
+  "description": "A soft, simple AAC speech app. Tap phrases to speak.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffd6df",
+  "theme_color": "#ffd1dc",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
