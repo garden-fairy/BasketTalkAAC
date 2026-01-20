@@ -353,4 +353,25 @@ textarea{
   font-family: inherit;
 }
 
+/* Category tab wrapper + action buttons */
+.tab-wrap{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tab-actions{
+  display: inline-flex;
+  gap: 6px;
+}
+
+.tab-actions button{
+  padding: 6px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+catEditEnabled: false,
+catDeleteEnabled: false,
+
 
