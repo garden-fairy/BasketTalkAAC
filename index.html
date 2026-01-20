@@ -2,38 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>BasketTalk AAC</title>
 
-  <meta name="theme-color" content="#ffd1dc" />
-  <meta name="description" content="A soft, simple AAC speech app. Tap phrases to speak. Offline-friendly." />
-
+  <meta name="theme-color" content="#ffd6df" />
   <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="style.css" />
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-  <main class="card">
-
-    <!-- HEADER -->
-    <div class="title-row">
+  <main class="card" aria-label="BasketTalk AAC">
+    <header class="title-row">
       <div class="logo" aria-hidden="true">🧺</div>
+
       <div class="title-text">
         <h1>BasketTalk</h1>
         <p class="subtitle">Tap. Speak. No pressure.</p>
       </div>
-    </div>
 
-    <!-- TOP CONTROLS -->
-    <section class="top-controls">
-      <div class="row">
-        <button id="btn-edit-mode" class="secondary" type="button">✏️ Edit</button>
-        <button id="btn-stop" class="secondary" type="button">🛑 Stop</button>
-        <button id="btn-test" class="secondary" type="button">🔊 Test voice</button>
+      <div class="title-actions">
+        <button id="btn-profile" class="icon-btn" type="button" aria-label="Open emergency profile">👤</button>
+      </div>
+    </header>
+
+    <section class="top-controls" aria-label="Controls">
+      <div class="row wrap">
+        <button id="btn-edit" class="secondary" type="button">✏️ Edit</button>
+        <button id="btn-add" class="primary" type="button">➕ Add phrase</button>
+        <button id="btn-reset" class="secondary" type="button">🧼 Reset</button>
       </div>
 
       <div class="row wrap">
@@ -44,67 +42,48 @@
 
         <label class="field">
           <span class="label">Speed</span>
-          <input id="rate" type="range" min="0.6" max="1.3" step="0.05" value="1" />
+          <input id="rate" type="range" min="0.6" max="1.4" step="0.05" value="1" />
         </label>
 
         <label class="field">
           <span class="label">Pitch</span>
-          <input id="pitch" type="range" min="0.7" max="1.3" step="0.05" value="1" />
+          <input id="pitch" type="range" min="0.6" max="1.4" step="0.05" value="1" />
         </label>
       </div>
     </section>
 
-    <!-- TYPE TO SPEAK -->
-    <section class="section">
-      <h2>Type to speak</h2>
-      <p class="muted">If you can type it, you can say it. No autocorrect drama.</p>
-
-      <div class="tts-box">
-        <input id="tts-input" type="text" placeholder="Type something..." autocomplete="off" />
-        <button id="tts-say" class="primary" type="button">Say</button>
-      </div>
-    </section>
-
-    <!-- QUICK BAR -->
-    <section class="section">
+    <section aria-label="Quick phrases">
       <div class="subhead">
-        <h2>Quick bar</h2>
-        <button id="btn-add-quick" class="mini" type="button">+ Add</button>
+        <h2>Quick</h2>
+        <p class="muted small">Tap to speak</p>
       </div>
-      <p class="muted small">Your most-used phrases. Tap to speak.</p>
-
       <div id="quick-grid" class="grid"></div>
     </section>
 
-    <!-- CATEGORIES -->
-    <section class="section">
+    <section aria-label="Categories">
       <div class="subhead">
         <h2>Categories</h2>
-        <button id="btn-add-phrase" class="mini" type="button">+ Add phrase</button>
+        <p class="muted small">Pick a basket</p>
       </div>
-
-      <div id="category-tabs" class="tabs" role="tablist" aria-label="Categories"></div>
-
-      <div class="subsection">
-        <div class="subhead">
-          <h3 id="category-title">…</h3>
-          <button id="btn-add-to-category" class="mini" type="button">+ Add here</button>
-        </div>
-
-        <div id="category-grid" class="grid"></div>
-      </div>
+      <div id="tabs" class="tabs" role="tablist" aria-label="Categories"></div>
     </section>
 
-    <!-- FOOTER PILLS -->
-    <div class="footer">
-      <span class="pill">🧺 baskets = brain hacks</span>
-      <span class="pill">💗 gentle + simple</span>
-      <span class="pill">🗣️ tap to talk</span>
-    </div>
+    <section aria-label="Phrases">
+      <div class="subhead">
+        <h2 id="cat-title">Phrases</h2>
+        <p class="muted small" id="cat-subtitle"></p>
+      </div>
+      <div id="phrase-grid" class="grid"></div>
+    </section>
 
+    <footer class="footer" aria-label="Tips">
+      <span class="pill">🫶 Shame-free</span>
+      <span class="pill">🧠 Autism/ADHD friendly</span>
+      <span class="pill">📵 Works offline</span>
+    </footer>
   </main>
 
-  <!-- ADD / EDIT MODAL -->
+  <!-- Add/Edit Modal -->
   <div id="modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal-card">
       <h2 id="modal-title">Add phrase</h2>
@@ -129,10 +108,115 @@
         <button id="modal-cancel" class="secondary" type="button">Cancel</button>
         <button id="modal-save" class="primary" type="button">Save</button>
       </div>
+    </div>
+  </div>
 
-      <p class="muted tiny">
-        Tip: You can pin any phrase to Quick bar in Edit mode.
-      </p>
+  <!-- EMERGENCY PROFILE OVERLAY -->
+  <div id="profile" class="hidden" role="dialog" aria-modal="true" aria-labelledby="profile-title">
+    <div class="modal-card profile-card">
+      <div class="profile-head">
+        <h2 id="profile-title">Emergency Profile</h2>
+        <button id="btn-profile-close" class="secondary mini" type="button">✖ Close</button>
+      </div>
+
+      <p class="muted small">Show the top section to ambulance / police. Private section is PIN locked.</p>
+
+      <!-- PUBLIC (always visible) -->
+      <div class="profile-block">
+        <h3>Show without unlocking</h3>
+
+        <div class="profile-photo-row">
+          <div id="profile-photo-preview" class="profile-photo" aria-label="Profile photo preview">📷</div>
+
+          <div class="profile-photo-actions">
+            <label class="mini secondary" style="display:inline-block; cursor:pointer;">
+              Upload photo
+              <input id="profile-photo-input" type="file" accept="image/*" hidden>
+            </label>
+            <button id="profile-photo-clear" class="mini secondary" type="button">Remove</button>
+          </div>
+        </div>
+
+        <label class="field">
+          <span class="label">Preferred name</span>
+          <input id="profile-pref-name" type="text" placeholder="Alex" />
+        </label>
+
+        <label class="field">
+          <span class="label">Date of birth</span>
+          <input id="profile-dob" type="text" placeholder="DD/MM/YYYY" />
+        </label>
+
+        <label class="field">
+          <span class="label">Key medical info (short)</span>
+          <textarea id="profile-public-med" rows="3" placeholder="Autistic. May shutdown. Needs extra processing time."></textarea>
+        </label>
+
+        <label class="field">
+          <span class="label">Emergency note (what helps)</span>
+          <textarea id="profile-public-note" rows="3" placeholder="Please speak one at a time. Give me time to respond."></textarea>
+        </label>
+
+        <div class="row end">
+          <button id="profile-save-public" class="primary" type="button">Save</button>
+        </div>
+      </div>
+
+      <!-- PRIVATE (PIN locked) -->
+      <div class="profile-block">
+        <div class="row" style="justify-content: space-between;">
+          <h3>Private details</h3>
+          <span id="profile-lock-pill" class="pill">Locked 🔒</span>
+        </div>
+
+        <div id="profile-locked-view">
+          <label class="field">
+            <span class="label">Enter 4-digit PIN</span>
+            <input id="profile-pin" type="password" inputmode="numeric" maxlength="4" placeholder="••••" />
+          </label>
+
+          <div class="row">
+            <button id="profile-unlock" class="primary" type="button">Unlock</button>
+            <button id="profile-set-pin" class="secondary" type="button">Set / Change PIN</button>
+          </div>
+
+          <p class="muted tiny">PIN is a screen lock (keeps it calm + private, but not “bank vault” security).</p>
+        </div>
+
+        <div id="profile-unlocked-view" class="hidden">
+          <p class="muted small">Unlocked. You can edit and then Save private.</p>
+
+          <label class="field">
+            <span class="label">Legal name</span>
+            <input id="profile-legal-name" type="text" />
+          </label>
+
+          <label class="field">
+            <span class="label">Address</span>
+            <textarea id="profile-address" rows="2"></textarea>
+          </label>
+
+          <label class="field">
+            <span class="label">NHS number</span>
+            <input id="profile-nhs" type="text" inputmode="numeric" />
+          </label>
+
+          <label class="field">
+            <span class="label">Emergency contacts</span>
+            <textarea id="profile-contacts" rows="2" placeholder="Jack: 07..."></textarea>
+          </label>
+
+          <label class="field">
+            <span class="label">Extra notes</span>
+            <textarea id="profile-private-note" rows="3"></textarea>
+          </label>
+
+          <div class="row">
+            <button id="profile-save-private" class="primary" type="button">Save private</button>
+            <button id="profile-lock" class="secondary" type="button">Lock</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -57,7 +57,7 @@ body{
 }
 
 .subtitle{
-  margin: 4px 0 0 0;
+  margin: 4px 0 0;
   color: var(--muted);
   font-size: 13px;
 }
@@ -87,7 +87,7 @@ h2, h3{
 }
 
 .top-controls{
-  padding: 10px 6px 0 6px;
+  padding: 10px 6px 6px;
 }
 
 .row{
@@ -117,8 +117,8 @@ input[type="text"], select{
   border-radius: 14px;
   border: 1px solid var(--border);
   background: rgba(255,255,255,0.85);
-  font-size: 15px;
   outline: none;
+  font-size: 15px;
 }
 
 input[type="range"]{
@@ -141,7 +141,7 @@ button:disabled{
 }
 
 .primary{
-  background: rgba(255, 105, 180, 0.20);
+  background: rgba(255, 105, 180, 0.28);
 }
 
 .secondary{
@@ -152,6 +152,11 @@ button:disabled{
   padding: 8px 10px;
   border-radius: 12px;
   font-size: 13px;
+}
+
+.tray-row{
+  display: flex;
+  gap: 10px;
 }
 
 .tts-box{
@@ -235,3 +240,108 @@ button:disabled{
   font-weight: 700;
 }
 
+.footer{
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill{
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.8);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+/* --- utilities --- */
+.hidden{ display:none !important; }
+
+/* --- modal overlay (used by Add Phrase + Profile) --- */
+#modal, #profile{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 999;
+}
+
+.modal-card{
+  width: min(520px, 96vw);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px;
+  backdrop-filter: blur(10px);
+}
+
+/* --- Profile button alignment in header --- */
+.title-actions{
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+/* --- Profile overlay styles --- */
+.profile-card{ width: min(760px, 96vw); }
+
+.profile-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.profile-block{
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(255, 105, 180, 0.25);
+}
+
+.profile-photo-row{
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+.profile-photo{
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.85);
+  display: grid;
+  place-items: center;
+  font-size: 26px;
+  overflow: hidden;
+}
+
+.profile-photo.has-img{
+  background-size: cover;
+  background-position: center;
+  color: transparent;
+}
+
+.profile-photo-actions{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+textarea{
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.85);
+  font-size: 15px;
+  outline: none;
+  font-family: inherit;
+}
