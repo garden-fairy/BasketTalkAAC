@@ -268,9 +268,13 @@ button:disabled{
   justify-content: center;
   padding: 18px;
   z-index: 999;
+  overflow: hidden;
+  touch-action: none;
 }
 
 .modal-card{
+  overscroll-behavior: contain;  /* stops "scroll chaining" to the page */
+  touch-action: pan-y;           /* allow vertical scrolling on the card */
   width: min(520px, 96vw);
   max-height: 90vh;              /* 👈 THIS IS THE FIX */
   background: var(--card);
@@ -348,4 +352,5 @@ textarea{
   outline: none;
   font-family: inherit;
 }
+
 
