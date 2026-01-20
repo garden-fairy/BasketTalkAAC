@@ -13,6 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
     ],
     activeCategoryId: "needs",
     editMode: false,
+    catEditEnabled: false,
+catDeleteEnabled: false,
     voiceURI: "",
     rate: 1,
     pitch: 1,
@@ -125,6 +127,9 @@ document.addEventListener("DOMContentLoaded", () => {
           ...(parsed.profile || {}),
           private: { ...structuredClone(defaultData.profile.private), ...((parsed.profile || {}).private || {}) }
         };
+        // Settings defaults (so older saves don't break)
+        merged.catEditEnabled = Boolean(parsed.catEditEnabled);
+        merged.catDeleteEnabled = Boolean(parsed.catDeleteEnabled);
 
         return merged;
       }catch(e){
@@ -152,6 +157,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnEdit = document.getElementById("btn-edit");
   const btnAdd = document.getElementById("btn-add");
   const btnReset = document.getElementById("btn-reset");
+  // Settings + categories
+const btnSettings = document.getElementById("btn-settings");
+const settingsOverlay = document.getElementById("settings");
+const btnSettingsClose = document.getElementById("btn-settings-close");
+const toggleCatEdit = document.getElementById("toggle-cat-edit");
+const toggleCatDelete = document.getElementById("toggle-cat-delete");
+const newCatEmoji = document.getElementById("new-cat-emoji");
+const newCatName = document.getElementById("new-cat-name");
+const btnAddCategory = document.getElementById("btn-add-category");
+
+// Type to speak
+const ttsInput = document.getElementById("tts-input");
+const ttsSpeak = document.getElementById("tts-speak");
+const ttsClear = document.getElementById("tts-clear");
+
 
   const voiceSelect = document.getElementById("voice-select");
   const rateRange = document.getElementById("rate");
@@ -311,23 +331,102 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ---------- render ---------- */
-  function renderTabs(){
-    tabs.innerHTML = "";
-    state.categories.forEach(cat => {
-      const btn = document.createElement("button");
-      btn.className = "tab" + (cat.id === state.activeCategoryId ? " active" : "");
-      btn.type = "button";
-      btn.setAttribute("role", "tab");
-      btn.setAttribute("aria-selected", cat.id === state.activeCategoryId ? "true" : "false");
-      btn.textContent = `${cat.emoji} ${cat.name}`;
-      btn.addEventListener("click", () => {
-        state.activeCategoryId = cat.id;
+ function renderTabs(){
+  tabs.innerHTML = "";
+
+  state.categories.forEach(cat => {
+    const wrap = document.createElement("div");
+    wrap.className = "tab-wrap";
+
+    const btn = document.createElement("button");
+    btn.className = "tab" + (cat.id === state.activeCategoryId ? " active" : "");
+    btn.type = "button";
+    btn.setAttribute("role", "tab");
+    btn.setAttribute("aria-selected", cat.id === state.activeCategoryId ? "true" : "false");
+    btn.textContent = `${cat.emoji} ${cat.name}`;
+
+    btn.addEventListener("click", () => {
+      state.activeCategoryId = cat.id;
+      saveData();
+      renderAll();
+    });
+
+    wrap.appendChild(btn);
+
+    // Only show category actions if enabled in Settings
+    if(state.catEditEnabled){
+      const actions = document.createElement("div");
+      actions.className = "tab-actions";
+
+      const editBtn = document.createElement("button");
+      editBtn.className = "icon-btn";
+      editBtn.type = "button";
+      editBtn.textContent = "✏️";
+      editBtn.title = "Edit category";
+      editBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+
+        const emoji = prompt("Category emoji:", cat.emoji);
+        if(emoji === null) return;
+
+        const name = prompt("Category name:", cat.name);
+        if(name === null) return;
+
+        const cleanEmoji = (emoji || cat.emoji).trim().slice(0, 4) || cat.emoji;
+        const cleanName = (name || cat.name).trim().slice(0, 40) || cat.name;
+
+        cat.emoji = cleanEmoji;
+        cat.name = cleanName;
+
         saveData();
         renderAll();
       });
-      tabs.appendChild(btn);
-    });
-  }
+
+      actions.appendChild(editBtn);
+
+      if(state.catDeleteEnabled){
+        const delBtn = document.createElement("button");
+        delBtn.className = "icon-btn";
+        delBtn.type = "button";
+        delBtn.textContent = "🗑️";
+        delBtn.title = "Delete category";
+
+        delBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+
+          if(state.categories.length <= 1){
+            alert("You can’t delete the last category.");
+            return;
+          }
+
+          const typed = prompt(`Type DELETE to remove "${cat.name}".\nThis also deletes its phrases.`);
+          if(typed !== "DELETE") return;
+
+          // remove category
+          state.categories = state.categories.filter(c => c.id !== cat.id);
+
+          // remove phrases bucket
+          delete state.phrasesByCategory[cat.id];
+
+          // fix active category if needed
+          if(state.activeCategoryId === cat.id){
+            state.activeCategoryId = state.categories[0].id;
+          }
+
+          saveData();
+          renderAll();
+        });
+
+        actions.appendChild(delBtn);
+      }
+
+      wrap.appendChild(actions);
+    }
+
+    tabs.appendChild(wrap);
+  });
+}
+
 //the edit buttons!!!!!!//
   function phraseCard(item, { onTap, onEdit, onPin, onDelete }){
   const card = document.createElement("div");
@@ -581,6 +680,87 @@ document.addEventListener("DOMContentLoaded", () => {
     saveData();
   });
 
+  // ---------- Settings (categories) ----------
+function openSettings(){
+  if(!settingsOverlay) return;
+  if(toggleCatEdit) toggleCatEdit.checked = Boolean(state.catEditEnabled);
+  if(toggleCatDelete) toggleCatDelete.checked = Boolean(state.catDeleteEnabled);
+  settingsOverlay.classList.remove("hidden");
+  settingsOverlay.setAttribute("aria-hidden", "false");
+}
+
+function closeSettings(){
+  if(!settingsOverlay) return;
+  settingsOverlay.classList.add("hidden");
+  settingsOverlay.setAttribute("aria-hidden", "true");
+}
+
+btnSettings?.addEventListener("click", openSettings);
+btnSettingsClose?.addEventListener("click", closeSettings);
+
+settingsOverlay?.addEventListener("click", (e) => {
+  if(e.target === settingsOverlay) closeSettings();
+});
+
+toggleCatEdit?.addEventListener("change", () => {
+  state.catEditEnabled = toggleCatEdit.checked;
+  saveData();
+  renderAll();
+});
+
+toggleCatDelete?.addEventListener("change", () => {
+  if(toggleCatDelete.checked){
+    const ok = confirm("Delete mode is dangerous. Turn it on?");
+    if(!ok){
+      toggleCatDelete.checked = false;
+      return;
+    }
+  }
+  state.catDeleteEnabled = toggleCatDelete.checked;
+  saveData();
+  renderAll();
+});
+
+btnAddCategory?.addEventListener("click", () => {
+  const emoji = (newCatEmoji?.value || "🧺").trim().slice(0, 4) || "🧺";
+  const name = (newCatName?.value || "").trim().slice(0, 40);
+
+  if(!name){
+    alert("Give the category a name.");
+    return;
+  }
+
+  const id = "cat_" + Date.now();
+  state.categories.push({ id, name, emoji });
+  state.phrasesByCategory[id] = [];
+
+  if(newCatEmoji) newCatEmoji.value = "";
+  if(newCatName) newCatName.value = "";
+
+  saveData();
+  renderAll();
+});
+
+// ---------- Type to speak ----------
+ttsSpeak?.addEventListener("click", () => {
+  const text = (ttsInput?.value || "").trim();
+  if(!text) return;
+  speak(text);
+});
+
+ttsClear?.addEventListener("click", () => {
+  if(ttsInput) ttsInput.value = "";
+});
+
+ttsInput?.addEventListener("keydown", (e) => {
+  if(e.key === "Enter"){
+    e.preventDefault();
+    const text = (ttsInput?.value || "").trim();
+    if(!text) return;
+    speak(text);
+  }
+});
+
   /* ---------- profile controls ---------- */
   btnProfile?.addEventListener("click", openProfile);
   btnProfileClose?.addEventListener("click", closeProfile);
@@ -713,3 +893,4 @@ document.addEventListener("DOMContentLoaded", () => {
     navigator.serviceWorker.register("sw.js").catch(() => {});
   }
 });
+
