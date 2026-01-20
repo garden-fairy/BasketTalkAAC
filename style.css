@@ -272,11 +272,14 @@ button:disabled{
 
 .modal-card{
   width: min(520px, 96vw);
+  max-height: 90vh;              /* 👈 THIS IS THE FIX */
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 18px;
+  overflow-y: auto;              /* 👈 AND THIS */
+  -webkit-overflow-scrolling: touch;
   backdrop-filter: blur(10px);
 }
 
@@ -345,3 +348,4 @@ textarea{
   outline: none;
   font-family: inherit;
 }
+
