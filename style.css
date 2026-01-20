@@ -371,9 +371,6 @@ textarea{
   font-size: 12px;
 }
 
-catEditEnabled: false,
-catDeleteEnabled: false,
-
 .tab-wrap{
   display: inline-flex;
   align-items: center;
@@ -390,5 +387,6 @@ catDeleteEnabled: false,
   border-radius: 12px;
   font-size: 12px;
 }
+
 
 
