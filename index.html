@@ -35,6 +35,58 @@
   <button id="btn-settings" class="secondary" type="button">⚙️ Settings</button>
 </div>
 
+      <div class="row wrap tts-box">
+  <label class="field" style="flex:1; min-width:260px;">
+    <span class="label">Type to speak</span>
+    <input id="tts-input" type="text" placeholder="Type something… then press Speak (or Enter)" maxlength="200" />
+  </label>
+  <button id="tts-speak" class="primary" type="button">🗣️ Speak</button>
+  <button id="tts-clear" class="secondary" type="button">🧽 Clear</button>
+</div>
+
+    <div id="settings" class="hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+  <div class="modal-card profile-card">
+    <div class="profile-head">
+      <h2 id="settings-title">Settings</h2>
+      <button id="btn-settings-close" class="secondary mini" type="button">✖ Close</button>
+    </div>
+
+    <div class="profile-block">
+      <h3>Category safety</h3>
+
+      <label class="row" style="justify-content: space-between; width:100%;">
+        <span>Enable category editing</span>
+        <input id="toggle-cat-edit" type="checkbox" />
+      </label>
+
+      <label class="row" style="justify-content: space-between; width:100%;">
+        <span>Allow deleting categories</span>
+        <input id="toggle-cat-delete" type="checkbox" />
+      </label>
+
+      <p class="muted tiny">Keep delete OFF most of the time so nothing gets removed by accident.</p>
+    </div>
+
+    <div class="profile-block">
+      <h3>Add a category</h3>
+
+      <div class="row wrap">
+        <label class="field" style="min-width:120px;">
+          <span class="label">Emoji</span>
+          <input id="new-cat-emoji" type="text" placeholder="🧺" maxlength="4" />
+        </label>
+
+        <label class="field" style="flex:1; min-width:200px;">
+          <span class="label">Name</span>
+          <input id="new-cat-name" type="text" placeholder="Example: Appointments" maxlength="40" />
+        </label>
+
+        <button id="btn-add-category" class="primary" type="button">➕ Add category</button>
+      </div>
+    </div>
+  </div>
+</div>
+  
 
       <div class="row wrap">
         <label class="field">
@@ -280,5 +332,6 @@
   <script src="script.js"></script>
 </body>
 </html>
+
 
 
