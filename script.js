@@ -353,75 +353,75 @@ const ttsClear = document.getElementById("tts-clear");
 
     wrap.appendChild(btn);
 
-    // Only show category actions if enabled in Settings
-    if(state.catEditEnabled){
-      const actions = document.createElement("div");
-      actions.className = "tab-actions";
+    // Show category actions if either is enabled
+if (state.catEditEnabled || state.catDeleteEnabled) {
+  const actions = document.createElement("div");
+  actions.className = "tab-actions";
 
-      const editBtn = document.createElement("button");
-      editBtn.className = "icon-btn";
-      editBtn.type = "button";
-      editBtn.textContent = "✏️";
-      editBtn.title = "Edit category";
-      editBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
+  // EDIT
+  if (state.catEditEnabled) {
+    const editBtn = document.createElement("button");
+    editBtn.className = "icon-btn";
+    editBtn.type = "button";
+    editBtn.textContent = "✏️";
+    editBtn.title = "Edit category";
+    editBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
 
-        const emoji = prompt("Category emoji:", cat.emoji);
-        if(emoji === null) return;
+      const emoji = prompt("Category emoji:", cat.emoji);
+      if (emoji === null) return;
 
-        const name = prompt("Category name:", cat.name);
-        if(name === null) return;
+      const name = prompt("Category name:", cat.name);
+      if (name === null) return;
 
-        const cleanEmoji = (emoji || cat.emoji).trim().slice(0, 4) || cat.emoji;
-        const cleanName = (name || cat.name).trim().slice(0, 40) || cat.name;
+      const cleanEmoji = (emoji || cat.emoji).trim().slice(0, 4) || cat.emoji;
+      const cleanName = (name || cat.name).trim().slice(0, 40) || cat.name;
 
-        cat.emoji = cleanEmoji;
-        cat.name = cleanName;
+      cat.emoji = cleanEmoji;
+      cat.name = cleanName;
 
-        saveData();
-        renderAll();
-      });
+      saveData();
+      renderAll();
+    });
 
-      actions.appendChild(editBtn);
+    actions.appendChild(editBtn);
+  }
 
-      if(state.catDeleteEnabled){
-        const delBtn = document.createElement("button");
-        delBtn.className = "icon-btn";
-        delBtn.type = "button";
-        delBtn.textContent = "🗑️";
-        delBtn.title = "Delete category";
+  // DELETE
+  if (state.catDeleteEnabled) {
+    const delBtn = document.createElement("button");
+    delBtn.className = "icon-btn";
+    delBtn.type = "button";
+    delBtn.textContent = "🗑️";
+    delBtn.title = "Delete category";
 
-        delBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
+    delBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
 
-          if(state.categories.length <= 1){
-            alert("You can’t delete the last category.");
-            return;
-          }
-
-          const typed = prompt(`Type DELETE to remove "${cat.name}".\nThis also deletes its phrases.`);
-          if(typed !== "DELETE") return;
-
-          // remove category
-          state.categories = state.categories.filter(c => c.id !== cat.id);
-
-          // remove phrases bucket
-          delete state.phrasesByCategory[cat.id];
-
-          // fix active category if needed
-          if(state.activeCategoryId === cat.id){
-            state.activeCategoryId = state.categories[0].id;
-          }
-
-          saveData();
-          renderAll();
-        });
-
-        actions.appendChild(delBtn);
+      if (state.categories.length <= 1) {
+        alert("You can’t delete the last category.");
+        return;
       }
 
-      wrap.appendChild(actions);
-    }
+      const typed = prompt(`Type DELETE to remove "${cat.name}".\nThis also deletes its phrases.`);
+      if (typed !== "DELETE") return;
+
+      state.categories = state.categories.filter(c => c.id !== cat.id);
+      delete state.phrasesByCategory[cat.id];
+
+      if (state.activeCategoryId === cat.id) {
+        state.activeCategoryId = state.categories[0].id;
+      }
+
+      saveData();
+      renderAll();
+    });
+
+    actions.appendChild(delBtn);
+  }
+
+  wrap.appendChild(actions);
+}
 
     tabs.appendChild(wrap);
   });
@@ -893,4 +893,5 @@ ttsInput?.addEventListener("keydown", (e) => {
     navigator.serviceWorker.register("sw.js").catch(() => {});
   }
 });
+
 
